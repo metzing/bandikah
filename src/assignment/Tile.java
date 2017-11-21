@@ -26,7 +26,7 @@ public class Tile extends JButton {
                     } else {
                         state = TileState.OPEN;
                         //TODO add callback
-                        if (hasMine){
+                        if (hasMine) {
                             bombCallback.onBombOpened();
                         }
                     }

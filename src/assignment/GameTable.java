@@ -13,15 +13,7 @@ public class GameTable extends JFrame implements BombCallback {
     private int numberOfMines;
     private JPanel jPanel;
 
-
-    /**
-     * Creates Table, sets attributes, calls initializeTable
-     *
-     * @param tableHeight   height of table
-     * @param tableWidth    width of table
-     * @param numberOfMines number of mines
-     */
-    public GameTable(int tableHeight, int tableWidth, int numberOfMines) throws Exception {
+    public GameTable(int tableHeight, int tableWidth, int numberOfMines) {
         this.tableHeight = tableHeight;
         this.tableWidth = tableWidth;
         this.numberOfMines = numberOfMines;
@@ -29,25 +21,22 @@ public class GameTable extends JFrame implements BombCallback {
 
         this.setTitle("MineSweeper");
         setSize(this.tableWidth * 20, this.tableHeight * 20);
-        this.jPanel = new JPanel();
-
-        jPanel.setLayout(new GridLayout());
-        jPanel.setVisible(true);
-        add(jPanel, BorderLayout.CENTER);
-
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
+        this.jPanel = new JPanel();
+        jPanel.setLayout(new GridLayout(tableWidth, tableHeight));
+        jPanel.setVisible(true);
+        add(jPanel, BorderLayout.CENTER);
 
-
-
-        //Fills table with blank tiles, with correct images
+        //Add tiles
         for (int i = 0; i < tableHeight; i++) {
             table.add(new ArrayList<>());
             for (int j = 0; j < tableWidth; j++) {
-                table.get(i).add(new Tile(this));
-                table.get(i).get(j).updateImage();
-                jPanel.add(table.get(i).get(j));
+                Tile temp = new Tile(this);
+                table.get(i).add(temp);
+                temp.updateImage();
+                jPanel.add(temp);
             }
         }
 
@@ -60,24 +49,12 @@ public class GameTable extends JFrame implements BombCallback {
 
             Tile item = table.get(randI).get(randJ);
 
-            if (!item.getTileMine()) {
-                item.setTileMine(true);
+            if (!item.isHasMine()) {
+                item.setHasMine(true);
                 item.updateImage();
                 minesLeft--;
             }
         }
-    }
-
-    public int getTableHeight() {
-        return tableHeight;
-    }
-
-    public int getTableWidth() {
-        return tableWidth;
-    }
-
-    public int getNumberOfMines() {
-        return numberOfMines;
     }
 
     @Override
