@@ -1,6 +1,7 @@
 package assignment;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +14,8 @@ public class Tile extends JButton {
 
     public Tile(BombCallback bombCallback) {
         setSize(ImageManager.getImageSize(), ImageManager.getImageSize());
+        setMargin(new Insets(0,0,0,0));
+        setBorder(null);
 
         state = TileState.CLOSED;
         hasMine = false;

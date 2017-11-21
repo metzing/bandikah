@@ -39,6 +39,8 @@ public class GameTable extends JFrame implements BombCallback {
                 jPanel.add(temp);
             }
         }
+        jPanel.updateUI();
+        pack();
 
         //Creates random mines
         int minesLeft = numberOfMines;
