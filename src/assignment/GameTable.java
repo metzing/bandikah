@@ -2,17 +2,15 @@ package assignment;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class GameTable extends JFrame {
+public class GameTable extends JFrame implements BombCallback {
     private List<List<Tile>> table;
     private int tableHeight;
     private int tableWidth;
     private int numberOfMines;
-    private JFrame jFrame;
     private JPanel jPanel;
 
 
@@ -28,30 +26,28 @@ public class GameTable extends JFrame {
         this.tableWidth = tableWidth;
         this.numberOfMines = numberOfMines;
         this.table = new ArrayList<>();
-        initializeTable();
 
-        this.jFrame = new JFrame("MineSweeper");
-        this.jFrame.setSize(this.tableWidth * 20, this.tableHeight * 20);
+        this.setTitle("MineSweeper");
+        setSize(this.tableWidth * 20, this.tableHeight * 20);
         this.jPanel = new JPanel();
 
         jPanel.setLayout(new GridLayout());
         jPanel.setVisible(true);
-        jFrame.add(jPanel, BorderLayout.CENTER);
+        add(jPanel, BorderLayout.CENTER);
 
-        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jFrame.setVisible(true);
-        jFrame.pack();
-    }
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
 
-    public void initializeTable() throws IOException {
+
+
 
         //Fills table with blank tiles, with correct images
         for (int i = 0; i < tableHeight; i++) {
             table.add(new ArrayList<>());
             for (int j = 0; j < tableWidth; j++) {
-                table.get(i).add(new Tile());
-                table.get(i).get(j).setButtonImage();
-
+                table.get(i).add(new Tile(this));
+                table.get(i).get(j).updateImage();
+                jPanel.add(table.get(i).get(j));
             }
         }
 
@@ -61,9 +57,12 @@ public class GameTable extends JFrame {
         while (minesLeft != 0) {
             int randI = random.nextInt(tableHeight);
             int randJ = random.nextInt(tableWidth);
-            if (table.get(randI).get(randJ).getTileMine() != TileMine.MINE) {
-                table.get(randI).get(randJ).setTileMine(TileMine.MINE);
-                table.get(randI).get(randJ).setButtonImage();
+
+            Tile item = table.get(randI).get(randJ);
+
+            if (!item.getTileMine()) {
+                item.setTileMine(true);
+                item.updateImage();
                 minesLeft--;
             }
         }
@@ -81,11 +80,8 @@ public class GameTable extends JFrame {
         return numberOfMines;
     }
 
-    public JFrame getjFrame() {
-        return jFrame;
-    }
-
-    public JPanel getjPanel() {
-        return jPanel;
+    @Override
+    public void onBombOpened() {
+        //TODO end game
     }
 }

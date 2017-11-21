@@ -1,92 +1,88 @@
 package assignment;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-public class Tile {
-    private TileMarked tileMarked;
-    private TileMine tileMine;
-    private TileVisibility tileVisibility;
-    private JButton jButton;
+public class Tile extends JButton {
+    private TileState state;
+    private boolean hasMine;
 
-    /*public Tile(TileMarked tileMarked, TileMine tileMine, TileVisibility tileVisibility, JButton jButton) {
-        this.tileMarked = tileMarked;
-        this.tileMine = tileMine;
-        this.tileVisibility = tileVisibility;
-        this.jButton = jButton;
-    }*/
+    public Tile(BombCallback bombCallback) {
+        setSize(20, 20);
 
-    public Tile() {
-        this.tileMarked = TileMarked.NOTMARKED;
-        this.tileMine = TileMine.NOTMINE;
-        this.tileVisibility = TileVisibility.NOTVISIBLE;
-        this.jButton = new JButton();
-        this.jButton.setSize(20, 20);
+        state = TileState.CLOSED;
+        hasMine = false;
+
+        addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (state == TileState.CLOSED) {
+                    if (SwingUtilities.isRightMouseButton(e)) {
+                        state = TileState.MARKED;
+                    } else {
+                        state = TileState.OPEN;
+                        //TODO add callback
+                        if (hasMine){
+                            bombCallback.onBombOpened();
+                        }
+                    }
+                }
+                updateImage();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
     }
 
-    public TileMarked getTileMarked() {
-        return tileMarked;
+    public boolean isHasMine() {
+        return hasMine;
     }
 
-    public TileMine getTileMine() {
-        return tileMine;
+    public void setHasMine(boolean hasMine) {
+        this.hasMine = hasMine;
     }
 
-    public TileVisibility getTileVisibility() {
-        return tileVisibility;
-    }
-
-    public JButton getjButton() {
-        return jButton;
-    }
-
-    public void setTileMarked(TileMarked tileMarked) {
-        this.tileMarked = tileMarked;
-    }
-
-    public void setTileMine(TileMine tileMine) {
-        this.tileMine = tileMine;
-    }
-
-    public void setTileVisibility(TileVisibility tileVisibility) {
-        this.tileVisibility = tileVisibility;
-    }
-
-    public void setjButton(JButton jButton) {
-        this.jButton = jButton;
-    }
-
-    public void setButtonImage() throws IOException {
-
-        Image mineMine = ImageIO.read(getClass().getResource("akna.bmp"));
-        Image mineNotVisible = ImageIO.read(getClass().getResource("akna_felfedetlen.bmp"));
-        Image mineVisible = ImageIO.read(getClass().getResource("akna_felfedett.bmp"));
-        Image mineMarked = ImageIO.read(getClass().getResource("akna_megjelolt.bmp"));
-
-        switch (tileVisibility) {
-            case NOTVISIBLE:
-                switch (tileMarked) {
-                    case NOTMARKED:
-                        jButton.setIcon(new ImageIcon(mineNotVisible));
-                        break;
-                    case MARKED:
-                        jButton.setIcon(new ImageIcon(mineMarked));
-                        break;
+    public void updateImage() {
+        Image image = null;
+        switch (state) {
+            case OPEN:
+                if (hasMine) {
+                    image = ImageManager.getMine();
+                } else {
+                    image = ImageManager.getPlain();
                 }
                 break;
-
-            case VSIBLE:
-                switch (tileMine) {
-                    case NOTMINE:
-                        jButton.setIcon(new ImageIcon(mineVisible));
-                        break;
-                    case MINE:
-                        jButton.setIcon(new ImageIcon(mineMine));
-                        break;
-                }
+            case CLOSED:
+                image = ImageManager.getClosed();
                 break;
+            case MARKED:
+                image = ImageManager.getMarked();
+                break;
+            default:
+                image = ImageManager.getClosed();
         }
+        setIcon(new ImageIcon(image));
     }
 }
