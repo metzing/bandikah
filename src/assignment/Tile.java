@@ -12,10 +12,13 @@ public class Tile extends JButton {
     private TileState state;
     private boolean hasMine;
 
+    private int surroundingMinesCount;
+
     public Tile(BombCallback bombCallback) {
         setSize(ImageManager.getImageSize(), ImageManager.getImageSize());
-        setMargin(new Insets(0,0,0,0));
+        setMargin(new Insets(0, 0, 0, 0));
         setBorder(null);
+
 
         state = TileState.CLOSED;
         hasMine = false;
@@ -59,12 +62,16 @@ public class Tile extends JButton {
         });
     }
 
-    public boolean isHasMine() {
+    public boolean hasMine() {
         return hasMine;
     }
 
     public void setHasMine(boolean hasMine) {
         this.hasMine = hasMine;
+    }
+
+    public void setSurroundingMinesCount(int surroundingMinesCount) {
+        this.surroundingMinesCount = surroundingMinesCount;
     }
 
     public void updateImage() {
@@ -87,5 +94,13 @@ public class Tile extends JButton {
                 image = ImageManager.getClosed();
         }
         setIcon(new ImageIcon(image));
+
+        if (state == TileState.OPEN && !hasMine) {
+            setIcon(null);
+            if (surroundingMinesCount > 0) {
+                setText(Integer.toString(surroundingMinesCount));
+            }
+            setEnabled(false);
+        }
     }
 }

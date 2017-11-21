@@ -3,11 +3,10 @@ package assignment;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class GameTable extends JFrame implements BombCallback {
-    private List<List<Tile>> table;
+    private ArrayList<ArrayList<Tile>> table;
     private int tableHeight;
     private int tableWidth;
     private int numberOfMines;
@@ -51,10 +50,31 @@ public class GameTable extends JFrame implements BombCallback {
 
             Tile item = table.get(randI).get(randJ);
 
-            if (!item.isHasMine()) {
+            if (!item.hasMine()) {
                 item.setHasMine(true);
                 item.updateImage();
                 minesLeft--;
+            }
+        }
+
+        //Count mines
+        for (int i = 0; i < tableHeight; i++) {
+            for (int j = 0; j < tableWidth; j++) {
+                Tile tile = table.get(i).get(j);
+                if (!tile.hasMine()) {
+                    int mineCounter = 0;
+                    for (int k = -1; k < 2; k++) {
+                        for (int l = -1; l < 2; l++) {
+                            try {
+                                Tile temp = table.get(i + k).get(j + l);
+                                if (temp.hasMine()) mineCounter++;
+                            } catch (IndexOutOfBoundsException ex) {
+                                //Do nothing lol
+                            }
+                        }
+                    }
+                    tile.setSurroundingMinesCount(mineCounter);
+                }
             }
         }
     }
