@@ -11,6 +11,10 @@ public class ImageManager {
     private static Image closed;
     private static Image plain;
 
+    public static int getImageSize(){
+        return 20;
+    }
+
     public static Image getMine() {
         if (mine == null) {
             try {

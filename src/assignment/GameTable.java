@@ -20,7 +20,7 @@ public class GameTable extends JFrame implements BombCallback {
         this.table = new ArrayList<>();
 
         this.setTitle("MineSweeper");
-        setSize(this.tableWidth * 20, this.tableHeight * 20);
+        setSize(this.tableWidth * ImageManager.getImageSize(), this.tableHeight * ImageManager.getImageSize());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 

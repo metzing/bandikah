@@ -12,7 +12,7 @@ public class Tile extends JButton {
     private boolean hasMine;
 
     public Tile(BombCallback bombCallback) {
-        setSize(20, 20);
+        setSize(ImageManager.getImageSize(), ImageManager.getImageSize());
 
         state = TileState.CLOSED;
         hasMine = false;
