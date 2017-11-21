@@ -90,8 +90,6 @@ public class Tile extends JButton {
             case MARKED:
                 image = ImageManager.getMarked();
                 break;
-            default:
-                image = ImageManager.getClosed();
         }
         setIcon(new ImageIcon(image));
 
