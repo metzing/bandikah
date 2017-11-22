@@ -1,10 +1,7 @@
 package assignment;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -14,11 +11,10 @@ public class Tile extends JButton {
 
     private int surroundingMinesCount;
 
-    public Tile(BombCallback bombCallback) {
+    public Tile(GameClickEvents gameClickEvents,int x, int y) {
         setSize(ImageManager.getImageSize(), ImageManager.getImageSize());
         setMargin(new Insets(0, 0, 0, 0));
         setBorder(null);
-
 
         state = TileState.CLOSED;
         hasMine = false;
@@ -26,16 +22,27 @@ public class Tile extends JButton {
         addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (state == TileState.CLOSED) {
-                    if (SwingUtilities.isRightMouseButton(e)) {
-                        state = TileState.MARKED;
-                    } else {
-                        state = TileState.OPEN;
-                        //TODO add callback
-                        if (hasMine) {
-                            bombCallback.onBombOpened();
+                switch (state) {
+                    case OPEN:
+                        break;
+                    case CLOSED:
+                        if (SwingUtilities.isRightMouseButton(e)) {
+                            state = TileState.MARKED;
+                            gameClickEvents.onMark(y,x);
+                        } else if (SwingUtilities.isLeftMouseButton(e)) {
+                            //state = TileState.OPEN;
+                            gameClickEvents.onTileOpened(x,y);
+                            if (hasMine) {
+                                gameClickEvents.onBombOpened();
+                            }
                         }
-                    }
+                        break;
+                    case MARKED:
+                        if(SwingUtilities.isRightMouseButton(e)){
+                            state = TileState.CLOSED;
+                            gameClickEvents.onUnMark(y,x);
+                        }
+                        break;
                 }
                 updateImage();
             }
@@ -60,6 +67,19 @@ public class Tile extends JButton {
 
             }
         });
+    }
+
+    public TileState getState() {
+        return state;
+    }
+
+    public void setState(TileState state) {
+        this.state = state;
+        this.updateImage();
+    }
+
+    public int getSurroundingMinesCount() {
+        return surroundingMinesCount;
     }
 
     public boolean hasMine() {

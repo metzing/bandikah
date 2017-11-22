@@ -12,13 +12,14 @@ public class ImageManager {
     private static Image plain;
 
     public static int getImageSize(){
-        return 20;
+        return 30;
     }
+
 
     public static Image getMine() {
         if (mine == null) {
             try {
-                mine = ImageIO.read(new FileInputStream("akna.bmp"));
+                mine = ImageIO.read(new FileInputStream("mine.png"));
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
@@ -29,7 +30,7 @@ public class ImageManager {
     public static Image getMarked() {
         if (marked == null) {
             try {
-                marked = ImageIO.read(new FileInputStream("akna_megjelolt.bmp"));
+                marked = ImageIO.read(new FileInputStream("mineMarked.png"));
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
@@ -40,7 +41,7 @@ public class ImageManager {
     public static Image getClosed() {
         if (closed == null) {
             try {
-                closed = ImageIO.read(new FileInputStream("akna_felfedetlen.bmp"));
+                closed = ImageIO.read(new FileInputStream("mineClosed.png"));
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
@@ -51,7 +52,7 @@ public class ImageManager {
     public static Image getPlain() {
         if (plain == null) {
             try {
-                plain = ImageIO.read(new FileInputStream("akna_felfedett.bmp"));
+                plain = ImageIO.read(new FileInputStream("mineOpen.png"));
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
