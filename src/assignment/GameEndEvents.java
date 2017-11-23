@@ -2,6 +2,6 @@ package assignment;
 
 public interface GameEndEvents {
     void gameEnded();
-    void gameWon();
+    void gameWon(int winTime);
     void gameLost();
 }

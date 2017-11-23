@@ -15,19 +15,15 @@ public class GameTable extends JFrame implements GameClickEvents {
     private int numberOfMines;
     private int minesLeft;
     private int timePassed;
-    private int actualMinesFound;
-    private int numberOfOpenTiles;
+    private int unopenedTiles;
 
-    //Swing elements
-    private JPanel gamePanel;
     private JPanel uiPanel;
-    private JButton stopButton;
     private JTextField timeText;
     private Timer timer;
     private JTextField minesLeftIndicator;
     private JLabel endMessage;
 
-    GameEndEvents gameEndEvents;
+    private GameEndEvents gameEndEvents;
 
     public GameTable(int tableHeight, int tableWidth, int numberOfMines, GameEndEvents gameEndEvents) {
         this.gameEndEvents = gameEndEvents;
@@ -38,8 +34,7 @@ public class GameTable extends JFrame implements GameClickEvents {
         this.minesLeft = numberOfMines;
         this.timePassed = 0;
         this.table = new ArrayList<>();
-        this.actualMinesFound = 0;
-        this.numberOfOpenTiles = 0;
+        this.unopenedTiles = tableHeight*tableWidth;
 
         this.setTitle("MineSweeper");
         setSize(this.tableWidth * ImageManager.getImageSize(), this.tableHeight * ImageManager.getImageSize() + 70);
@@ -48,7 +43,7 @@ public class GameTable extends JFrame implements GameClickEvents {
         setVisible(true);
 
         //Game Panel setup
-        this.gamePanel = new JPanel();
+        JPanel gamePanel = new JPanel();
         gamePanel.setLayout(new GridLayout(tableWidth, tableHeight));
         gamePanel.setVisible(true);
         add(gamePanel, BorderLayout.SOUTH);
@@ -57,12 +52,13 @@ public class GameTable extends JFrame implements GameClickEvents {
         this.uiPanel = new JPanel();
         this.uiPanel.setSize(this.tableWidth * ImageManager.getImageSize(), 70);
         this.uiPanel.setLayout(new FlowLayout());
-        this.stopButton = new JButton("Stop");
-        this.stopButton.addMouseListener(new MouseListener() {
+        JButton stopButton = new JButton("Stop");
+        stopButton.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isLeftMouseButton(e)) {
                     endMessage.setText("YOU LOST!");
+                    timer.stop();
                     gameEndEvents.gameEnded();
                 }
             }
@@ -93,7 +89,7 @@ public class GameTable extends JFrame implements GameClickEvents {
         minesLeftIndicator.setText(Integer.toString(minesLeft));
         minesLeftIndicator.setEditable(false);
         this.uiPanel.add(minesLeftIndicator);
-        this.uiPanel.add(this.stopButton);
+        this.uiPanel.add(stopButton);
 
 
         //timeLabel setup
@@ -167,9 +163,10 @@ public class GameTable extends JFrame implements GameClickEvents {
     }
 
     public void checkWinCondition() {
-        if (numberOfOpenTiles == tableHeight * tableWidth -numberOfMines) {
+        if (unopenedTiles == numberOfMines) {
+            timer.stop();
             endMessage.setText("YOU WON!");
-            gameEndEvents.gameWon();
+            gameEndEvents.gameWon(timePassed);
         }
     }
 
@@ -181,13 +178,13 @@ public class GameTable extends JFrame implements GameClickEvents {
         }
     }
 
-    public void stopTimer() {
-        timer.stop();
+    public int getNumberOfMines() {
+        return numberOfMines;
     }
 
     @Override
     public void onBombOpened() {
-        //TODO end game
+        timer.stop();
         endMessage.setText("YOU LOST!");
         gameEndEvents.gameLost();
     }
@@ -205,7 +202,7 @@ public class GameTable extends JFrame implements GameClickEvents {
         }
 
         item.setState(TileState.OPEN);
-        numberOfOpenTiles++;
+        unopenedTiles--;
         checkWinCondition();
 
         if (item.getSurroundingMinesCount() == 0) {
@@ -223,9 +220,6 @@ public class GameTable extends JFrame implements GameClickEvents {
     @Override
     public void onMark(int y, int x) {
         minesLeftIndicator.setText(Integer.toString(--minesLeft));
-        if (table.get(y).get(x).hasMine()) {
-            actualMinesFound++;
-        }
         checkWinCondition();
         uiPanel.updateUI();
     }
@@ -234,8 +228,5 @@ public class GameTable extends JFrame implements GameClickEvents {
     public void onUnMark(int y, int x) {
         minesLeftIndicator.setText(Integer.toString(++minesLeft));
         uiPanel.updateUI();
-        if (table.get(y).get(x).hasMine()) {
-            actualMinesFound--;
-        }
     }
 }
