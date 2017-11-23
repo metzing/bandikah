@@ -16,7 +16,7 @@ public class GameTable extends JFrame implements GameClickEvents {
     private int minesLeft;
     private int timePassed;
     private int unopenedTiles;
-    //Swing elements
+
     private JPanel uiPanel;
     private JTextField timeText;
     private Timer timer;
@@ -34,7 +34,7 @@ public class GameTable extends JFrame implements GameClickEvents {
         this.minesLeft = numberOfMines;
         this.timePassed = 0;
         this.table = new ArrayList<>();
-        this.unopenedTiles = tableHeight * tableWidth;
+        this.unopenedTiles = tableHeight*tableWidth;
 
         this.setTitle("MineSweeper");
         setSize(this.tableWidth * ImageManager.getImageSize(), this.tableHeight * ImageManager.getImageSize() + 70);
@@ -160,11 +160,11 @@ public class GameTable extends JFrame implements GameClickEvents {
                     int mineCounter = 0;
                     for (int k = -1; k < 2; k++) {
                         for (int l = -1; l < 2; l++) {
-                            if (i + k >= tableHeight || j + l >= tableWidth || i + k < 0 || j + l < 0) {
-
-                            } else {
+                            try {
                                 Tile temp = table.get(i + k).get(j + l);
                                 if (temp.hasMine()) mineCounter++;
+                            } catch (IndexOutOfBoundsException ex) {
+                                //Do nothing lol
                             }
                         }
                     }
