@@ -126,7 +126,7 @@ public class GameMenu extends JFrame implements GameEndEvents {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isLeftMouseButton(e)) {
-                    startNewGame(10, 10, 6);
+                    startNewGame(15, 15, 30);
                 }
             }
 
@@ -150,6 +150,7 @@ public class GameMenu extends JFrame implements GameEndEvents {
 
             }
         });
+
 
 
         menuPanel.add(easy);
@@ -213,6 +214,8 @@ public class GameMenu extends JFrame implements GameEndEvents {
         this.setVisible(false);
         gameTable.setVisible(true);
     }
+
+    protected GameTable getGameTable(){return gameTable;}
 
     @Override
     public void gameEnded() {
